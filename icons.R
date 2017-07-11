@@ -1,0 +1,46 @@
+library("leaflet")
+
+TransportIcons <- iconList(
+  BigPlane = makeIcon ("https://www.shareicon.net/download/512x512/2016/08/02/805715_airport_512x512.png",
+                        "https://www.shareicon.net/download/512x512/2016/08/02/805715_airport_512x512.png",
+                        32,32),
+  Plane = makeIcon("https://www.shareicon.net/download/2016/08/02/805710_airport_512x512.png",
+                   "https://www.shareicon.net/download/2016/08/02/805710_airport_512x512.png", 
+                   24,24),
+  Train = makeIcon("https://www.shareicon.net/download/512x512/2016/08/31/821538_transportation_512x512.png",
+                   "https://www.shareicon.net/download/512x512/2016/08/31/821538_transportation_512x512.png",
+                   24,24),
+  Bus = makeIcon("https://www.shareicon.net/download/512x512/2016/08/02/805723_transportation_512x512.png",
+                 "https://www.shareicon.net/download/512x512/2016/08/02/805723_transportation_512x512.png",
+                 24,24),
+  Ship =  makeIcon("https://www.shareicon.net/download/2016/08/02/805716_navigation_512x512.png",
+                   "https://www.shareicon.net/download/2016/08/02/805716_navigation_512x512.png", 
+                   24,24),
+  Boat =  makeIcon("https://www.shareicon.net/download/512x512/2016/07/31/804783_explorer_512x512.png",
+                   "https://www.shareicon.net/download/512x512/2016/07/31/804783_explorer_512x512.png", 
+                   24,24),
+  Sail = makeIcon("https://www.shareicon.net/download/512x512/2016/08/02/805728_sailing_512x512.png",
+                  "https://www.shareicon.net/download/512x512/2016/08/02/805728_sailing_512x512.png",
+                  24,24),
+  Taxi = makeIcon("https://www.shareicon.net/download/512x512/2016/08/02/805713_car_512x512.png",
+                  "https://www.shareicon.net/download/512x512/2016/08/02/805713_car_512x512.png",
+                  24,24),
+  Car = makeIcon("https://www.shareicon.net/download/512x512/2016/08/02/805711_car_512x512.png",
+                 "https://www.shareicon.net/download/512x512/2016/08/02/805711_car_512x512.png",
+                 24,24),
+  Hike = makeIcon("https://www.shareicon.net/download/512x512/2016/11/16/854351_feet_512x512.png",
+                  "https://www.shareicon.net/download/512x512/2016/11/16/854351_feet_512x512.png",
+                  24,24),
+  Walk = makeIcon("https://www.shareicon.net/download/512x512/2016/11/16/854351_feet_512x512.png",
+                  "https://www.shareicon.net/download/512x512/2016/11/16/854351_feet_512x512.png",
+                  24,24),
+  Bike = makeIcon("https://www.shareicon.net/download/512x512/2016/08/02/805721_profile_512x512.png",
+                  "https://www.shareicon.net/download/512x512/2016/08/02/805721_profile_512x512.png",
+                  24,24),
+  MotorBike = makeIcon("https://www.shareicon.net/download/512x512/2016/08/02/805720_transportation_512x512.png",
+                  "https://www.shareicon.net/download/512x512/2016/08/02/805720_transportation_512x512.png",
+                  24,24)
+)
+
+
+BlogColours <- c("#15A9DB","#586E75","#999", "#FFF", "#C7254E", "#073642")

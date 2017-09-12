@@ -4,3 +4,6 @@
 .Ruserdata
 *auth*
 *.ipynb
+*.html
+client_secret.json
+*.log

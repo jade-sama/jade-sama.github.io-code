@@ -26,7 +26,7 @@ load_data <- function (WorkbookTitle, SheetName, GroupByCategory = FALSE) {
         mutate( Stay = paste0("<br/>",capwords(format(ArrivalDate,DateFormat)),
                              ifelse(LeaveDate==ArrivalDate,
                                     "",
-                                    paste0(" - ",if.na(capwords(format(LeaveDate,DateFormat),"?")))
+                                    paste0(" - ",capwords(if.na(format(LeaveDate,DateFormat),"?")))
                                     )
                              ),
                 Journey = paste0("<b>",DepartureName,
@@ -54,6 +54,7 @@ load_data <- function (WorkbookTitle, SheetName, GroupByCategory = FALSE) {
                        Length=sum(Length,na.rm = TRUE),
                        Stay=paste0(Stay,collapse="")
                        ) %>%
+        
             as.data.frame()
 
     }
@@ -62,23 +63,28 @@ load_data <- function (WorkbookTitle, SheetName, GroupByCategory = FALSE) {
     places$Order <- as.character(rank(places$MinDate,ties.method= "first"))
 
     places <- places %>%
-        mutate(Month=month_name(MinDate,MaxDate))
+      rowwise() %>%
+      mutate(Month=month_name(MinDate,MaxDate))
 
 
     # get coordinates
+    places <- places[!is.na(places$Arrival),]
+    connections <- connections[!is.na(connections$Arrival),]
+    connections <- connections[!is.na(connections$Departure),]
+    
     places <- places %>%
         do(geocode(.$Arrival)) %>%
         cbind(places)
     colnames(places)[1:2] <- c("ArrivalLon", "ArrivalLat")
 
-    connections <- connections[!is.na(connections$Arrival),] %>%
+    connections <- connections  %>%
         do(geocode(.$Arrival)) %>%
-        cbind(connections[!is.na(connections$Arrival),])
+        cbind(connections)
     colnames(connections)[1:2] <- c("ArrivalLon", "ArrivalLat")
 
-    connections <- connections[!is.na(connections$Departure),] %>%
+    connections <- connections %>%
         do(geocode(.$Departure)) %>%
-        cbind(connections[!is.na(connections$Departure),])
+        cbind(connections )
     colnames(connections)[1:2] <- c("DepartureLon", "DepartureLat")
 
     # mode of transport markers
@@ -90,15 +96,15 @@ load_data <- function (WorkbookTitle, SheetName, GroupByCategory = FALSE) {
 
 create_map <- function(connections, places, type, # c("DayBubble", "OrderBubble")
                        TileOpacity = 0.35, MarkerOpacity = 0.8,
-                       AdjRadius = 50000, MinDaysForBubble = 14,
+                       AdjRadius = 50000, MinDaysForBubble = 14.0,
                        BorderWeight = 2, LineWeight = 4, LineDash = "1,10",
                        LabelFontSize1 = "18px", LabelFontSize2 = "16px", LabelFontSize3 = "14px") {
 
     # bounds for the map
-    MinLat=min(places$ArrivalLat)-1.5
-    MaxLat=max(places$ArrivalLat)+1.5
-    MinLon=min(places$ArrivalLon)-1.5
-    MaxLon=max(places$ArrivalLon)+1.5
+    MinLat=min(places$ArrivalLat)
+    MaxLat=max(places$ArrivalLat)
+    MinLon=min(places$ArrivalLon)
+    MaxLon=max(places$ArrivalLon)
 
     # map tiles
     map <- leaflet(places) %>%
@@ -118,7 +124,7 @@ create_map <- function(connections, places, type, # c("DayBubble", "OrderBubble"
                              radius = MinDaysForBubble,
                              fillOpacity = MarkerOpacity, fillColor = BlogColours[1],
                              stroke = TRUE, color = BlogColours[4], weight = BorderWeight,
-                             popup = ~paste0("<b><a href='",Link,"'>", ArrivalName,"</a></b>", Stay),
+                             popup = ~paste0("<b><a target=\"_blank\" href='",Link,"'>", ArrivalName,"</a></b>", Stay),
                              label = ~Order,
                              labelOptions = labelOptions(noHide = TRUE, textOnly = TRUE, direction="top", offset=c(0,-MinDaysForBubble),
                                                          style = list("color" = BlogColours[4], "font-size" = LabelFontSize3)))
@@ -142,9 +148,9 @@ create_map <- function(connections, places, type, # c("DayBubble", "OrderBubble"
 
         # labels for places
         map <- map %>%
-            addCircleMarkers(lng = ~ArrivalLon, lat = ~ArrivalLat+sqrt(max(Length,MinDaysForBubble))-1.5,
+            addCircleMarkers(lng = ~ArrivalLon, lat = ~ArrivalLat+sqrt(greatest(Length,MinDaysForBubble))-2.2,
                              radius = MinDaysForBubble, fillOpacity = 0, stroke = FALSE,
-                             popup = ~paste0("<b><a href='",Link,"'>", ArrivalName,"</a></b>",Stay),
+                             popup = ~paste0("<b><a target=\"_blank\" href='",Link,"'>", ArrivalName,"</a></b>",Stay),
                              label = ~ArrivalName,
                              labelOptions = labelOptions(noHide = TRUE, textOnly = FALSE,direction = "top",
                                                          style = list("color" = BlogColours[1], "font-size" = LabelFontSize1,
@@ -152,7 +158,7 @@ create_map <- function(connections, places, type, # c("DayBubble", "OrderBubble"
 
         # labels for month
         map <- map %>%
-            addLabelOnlyMarkers(lng = ~ArrivalLon, lat = ~ArrivalLat-sqrt(max(Length,MinDaysForBubble))+1.5,
+            addLabelOnlyMarkers(lng = ~ArrivalLon, lat = ~ArrivalLat-sqrt(greatest(Length,MinDaysForBubble))+2.2,
                                 label=~Month,
                                 labelOptions = labelOptions(noHide = TRUE, textOnly = TRUE, direction = "top",
                                                             style = list("color" = BlogColours[2], "font-size" = LabelFontSize2,

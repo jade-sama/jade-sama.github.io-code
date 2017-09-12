@@ -1,0 +1,3 @@
+- R script to generate leaflet maps for the blog
+- Python script to autogenerate markdown articles
+- Python script to autogenerate Plotly images

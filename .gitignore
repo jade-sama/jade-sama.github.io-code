@@ -1,9 +1,11 @@
 *.Rproj*
-.Rhistory
-.RData
-.Ruserdata
+*.Rhistory
+*.RData
+*.Ruserdata
 *auth*
-*.ipynb
+*checkpoint*
 *.html
+
 client_secret.json
+
 *.log
